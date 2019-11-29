@@ -31,6 +31,7 @@ export default {
   */
   plugins: [
     '@/plugins/scroll.js',
+    "@/plugins/firebase",
   ],
   /*
   ** Nuxt.js dev-modules
