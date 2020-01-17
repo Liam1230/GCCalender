@@ -94,6 +94,7 @@ exports.onRequestClass = functions.https.onRequest((request, response) =>{
         const body = request.body;
         const date = body.date;
         const time = body.time.replace('〜','~');
+        const location = body.location
         const auther = body.auther;
 
         //本文に日付、時間、リクエスト者をパラメータに追加したURLを記載しておく
@@ -114,11 +115,11 @@ ${date} ${time}
 ${auther}
 
 承認する場合は以下のURLをクリック
-https://us-central1-garagecampus-dd3ca.cloudfunctions.net/addEventToCalender/?date=${date}&time=${time}&auther=${auther}
+https://us-central1-garagecampus-dd3ca.cloudfunctions.net/addEventToCalender/?date=${date}&time=${time}&auther=${auther}&location=${location}
 
 
 拒否する場合は以下のURLをクリック
-https://us-central1-garagecampus-dd3ca.cloudfunctions.net/rejectRequest/?date=${date}&time=${time}&auther=${auther}
+https://us-central1-garagecampus-dd3ca.cloudfunctions.net/rejectRequest/?date=${date}&time=${time}&auther=${auther}&location=${location}
 `
 
         // メッセージ
@@ -143,6 +144,7 @@ exports.rejectRequest = functions.https.onRequest((request, response) =>{
         const date = body.date;
         const time = body.time;
         const auther = body.auther;
+        const location = body.location;
 
         var smtpConfig = {
             host: 'smtp.gmail.com',
@@ -161,7 +163,7 @@ exports.rejectRequest = functions.https.onRequest((request, response) =>{
 もう一度別の日程にリクエストをお願いします。
 
 リクエストの内容
-${date} ${time}
+${date} ${time} ${location}
 ${auther}
 `
         // メッセージ
@@ -186,6 +188,7 @@ exports.addEventToCalender = functions.https.onRequest((request, response) =>{
         const date = body.date;
         const time = body.time;
         const auther = body.auther;
+        const location = body.location;
 
         const {client_secret, client_id, redirect_uris} = googleCredentials.installed;
         const oAuth2Client = new OAuth2(client_id, client_secret, redirect_uris[0]);
@@ -217,7 +220,7 @@ exports.addEventToCalender = functions.https.onRequest((request, response) =>{
                         end: { // 終了日・時刻
                             dateTime: date+endTime
                         },
-                        location: '木下家', // 場所
+                        location: location, // 場所
                         attendees: [{
                             email: auther
                         }]
@@ -246,7 +249,7 @@ exports.addEventToCalender = functions.https.onRequest((request, response) =>{
             var template = `
 授業のリクエストが承認されました。
 リクエストの内容
-${date} ${time}
+${date} ${time} ${location}
 ${auther}
 `
             // メッセージ

@@ -8,7 +8,7 @@
 		</v-container>
 	</v-dialog>
 	<v-snackbar v-model="infoSnackbar.isShow" :color="infoSnackbar.color"
-		:timeout="infoSnackbar.timeout" :top="infoSnackbar.top" 
+		:timeout="infoSnackbar.timeout" :top="infoSnackbar.top"
 		:vertical="infoSnackbar.vertical">
 		{{ infoSnackbar.text }}
 		<v-btn dark text @click="infoSnackbar.isShow = false">
@@ -49,11 +49,15 @@
 							</v-date-picker>
 						</v-menu>
 					</v-col>
-					<v-col cols="12" md="4">
+					<v-col cols="12" md="3">
 						<v-select :items="times" label="時間を選択" v-model="selectTime">
 						</v-select>
 					</v-col>
-					<v-col cols="12" md="4">
+					<v-col cols="12" md="2">
+						<v-select :items="places" label="授業の場所" v-model="selectPlace">
+						</v-select>
+					</v-col>
+					<v-col cols="12" md="3">
 						<v-btn v-on:click="onClickRequest" color="blue" class="white--text font-weight-bold">
 							授業をリクエスト
 						</v-btn>
@@ -170,6 +174,7 @@ const TOKEN_PATH = 'token.json';
 			selectedElement: null,
 			selectedOpen: false,
 			selectTime:'',
+			selectPlace:'',
 			loadingCount: 1,
 			isLogin:false,
 			events: [],
@@ -177,6 +182,10 @@ const TOKEN_PATH = 'token.json';
 				'13:00〜16:00',
 				'16:00〜19:00',
 				'19:00〜21:30'
+			],
+			places:[
+				'wework(事務所)',
+				'zoom(遠隔)'
 			]
 		}),
 		mounted () {
@@ -265,7 +274,8 @@ const TOKEN_PATH = 'token.json';
 				this.$axios.post(url, {
 					date: this.date,
 					time: this.selectTime,
-					auther: this.user.email
+					auther: this.user.email,
+					location: this.selectPlace
 				}).then(res=>{
 					this.loadingCount--;
 					console.log(res)
